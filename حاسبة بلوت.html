@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>حاسبة بلوت</title>
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Changa:wght@400;500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--bg:#f3efe4;--card:#fffdf6;--ink:#17261f;--mut:#6b7a70;--felt:#0f4d36;--felt2:#0a3828;--gold:#c8962b;--line:#ddd5bf;--red:#b3402f;--on:#fffdf6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0b1a14;--card:#12261d;--ink:#efe8d3;--mut:#93a699;--felt:#13694a;--felt2:#0d4b34;--gold:#e0b04a;--line:#24402f;--red:#e0705d}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0b1a14;--card:#12261d;--ink:#efe8d3;--mut:#93a699;--felt:#13694a;--felt2:#0d4b34;--gold:#e0b04a;--line:#24402f;--red:#e0705d}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Tajawal,system-ui,sans-serif;font-size:16px}
+.w{max-width:520px;margin:0 auto;padding:12px 14px 40px}
+h1{font-family:Lalezar,Changa,sans-serif;font-weight:400;font-size:28px;margin:4px 0 12px;display:flex;justify-content:space-between;align-items:center}
+.tools button{background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:6px 10px;font:inherit;font-size:13px;margin-inline-start:6px}
+.board{background:radial-gradient(120% 140% at 50% 0,var(--felt),var(--felt2));border-radius:20px;padding:16px;color:#f5efd9;display:grid;grid-template-columns:1fr 1fr;gap:10px;box-shadow:inset 0 0 0 2px rgba(200,150,43,.55)}
+.team{text-align:center}
+.team input{background:transparent;border:0;border-bottom:1px dashed rgba(245,239,217,.4);color:inherit;text-align:center;font:700 16px Tajawal;width:90%;padding:2px}
+.score{font-family:Lalezar,Changa,sans-serif;font-size:84px;line-height:1.05;font-weight:400;color:#fff;text-shadow:0 4px 0 rgba(0,0,0,.35),0 0 20px rgba(224,176,74,.4);transition:transform .25s}
+.score.pop{transform:scale(1.18);color:var(--gold)}
+.bar{height:6px;border-radius:3px;background:rgba(0,0,0,.3);overflow:hidden}.bar i{display:block;height:100%;background:var(--gold);width:0;transition:width .5s}
+.tgt{grid-column:1/-1;text-align:center;font-size:13px;opacity:.85}
+.tgt input{width:56px;background:rgba(0,0,0,.25);border:0;color:inherit;border-radius:6px;text-align:center;font:inherit}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:12px}
+.lbl{font-weight:700;margin:12px 0 6px;font-size:14px;color:var(--mut)}.lbl:first-child{margin-top:0}
+.seg{display:flex;gap:6px}.seg button{flex:1;padding:10px 4px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink);font:500 15px Tajawal}
+.seg button.on{background:var(--felt);color:#fff;border-color:var(--felt);font-weight:700}
+.ab{display:flex;gap:10px;align-items:center}.ab input{width:100%;font:400 26px Lalezar,Changa,sans-serif;text-align:center;padding:8px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink)}
+.ab div{white-space:nowrap;font-size:13px;color:var(--mut)}.ab b{font:400 22px Lalezar,Changa,sans-serif;color:var(--ink)}
+.pr{display:grid;grid-template-columns:1fr auto auto;gap:8px 14px;align-items:center}
+.pr .h{font-size:13px;color:var(--mut);text-align:center}
+.st{display:flex;align-items:center;gap:6px}.st button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:18px;line-height:1}
+.st span{min-width:18px;text-align:center;font-weight:700}
+.go{width:100%;margin-top:14px;padding:14px;border:0;border-radius:12px;background:var(--gold);color:#1b1405;font:400 22px Lalezar,Changa,sans-serif;letter-spacing:.5px;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.go:active{transform:translateY(2px);box-shadow:none}
+.sum{font-size:13px;color:var(--mut);text-align:center;margin-top:8px;min-height:18px}
+table{width:100%;border-collapse:collapse;font-size:15px}td,th{padding:7px 4px;text-align:center;border-bottom:1px solid var(--line)}th{color:var(--mut);font-weight:500;font-size:13px}
+.fail{color:var(--red);font-size:12px}
+.empty{color:var(--mut);text-align:center;padding:10px;font-size:14px}
+#win{position:fixed;inset:0;background:rgba(5,25,17,.9);display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;z-index:9;padding:24px}
+#win.show{display:flex}#win h2{font:400 56px Lalezar,Changa,sans-serif;text-shadow:0 4px 0 rgba(0,0,0,.4);color:var(--gold);margin:0 0 6px}#win p{font-size:20px;margin:0 0 20px}
+#win button{padding:12px 22px;border-radius:12px;border:0;background:var(--gold);font:700 17px Tajawal;margin:5px}
+#cv{position:fixed;inset:0;pointer-events:none;z-index:10}
+.pl{display:flex;gap:4px;margin-top:4px}.pl input{font:400 13px Tajawal;opacity:.9;width:50%}
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.rg label{font-size:13px;color:var(--mut);display:flex;flex-direction:column;gap:3px}.rg input{padding:8px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);font:700 16px Tajawal}
+details.card summary{font-weight:700;cursor:pointer}
+body{font-family:Changa,Tajawal,system-ui,sans-serif}
+.seg button,.team input,.tools button,#win button{font-family:Changa,Tajawal,sans-serif}
+.seg button.on{box-shadow:0 3px 0 rgba(0,0,0,.3)}
+.lbl{font-family:Changa,Tajawal,sans-serif}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>حاسبة بلوت <span class="tools"><button id="snd">🔊 الصوت</button><button id="und">تراجع</button><button id="rst">لعبة جديدة</button></span></h1>
+
+<div class="board">
+ <div class="team"><input id="n0" value="لنا" maxlength="12"><div class="pl"><input id="p0" placeholder="لاعب 1" maxlength="10"><input id="p2" placeholder="لاعب 2" maxlength="10"></div><div class="score" id="s0">0</div><div class="bar"><i id="b0"></i></div></div>
+ <div class="team"><input id="n1" value="لهم" maxlength="12"><div class="pl"><input id="p1" placeholder="لاعب 1" maxlength="10"><input id="p3" placeholder="لاعب 2" maxlength="10"></div><div class="score" id="s1">0</div><div class="bar"><i id="b1"></i></div></div>
+ <div class="tgt" id="dl"></div>
+ <div class="tgt">اللعبة تنتهي عند <input id="tg" type="number" value="152" min="10" inputmode="numeric"></div>
+</div>
+
+<div class="card">
+ <div class="lbl">نوع اللعب</div>
+ <div class="seg" id="gm"><button data-v="h" class="on">حكم</button><button data-v="s">صن</button></div>
+ <div class="lbl">المشتري</div>
+ <div class="seg" id="by"><button data-v="0" class="on" id="by0">لنا</button><button data-v="1" id="by1">لهم</button></div>
+ <div class="lbl">الأبناط (مع الأرض)</div>
+ <div class="ab"><div><span id="an0">لنا</span></div><input id="ab" type="number" inputmode="numeric" placeholder="0" min="0"><div><span id="an1">لهم</span>: <b id="ob">0</b></div></div>
+ <div class="lbl">المشاريع</div>
+ <div class="pr" id="pr"></div>
+ <div class="lbl">المضاعفة</div>
+ <div class="seg" id="mu"><button data-v="1" class="on">عادي</button><button data-v="2">دبل ×2</button><button data-v="3">ثري ×3</button><button data-v="4">فور ×4</button></div>
+ <div class="lbl">كبوت (أخذ كل الأكلات)</div>
+ <div class="seg" id="kb"><button data-v="-1" class="on">لا</button><button data-v="0" id="kb0">لنا</button><button data-v="1" id="kb1">لهم</button></div>
+ <div class="sum" id="pv"></div>
+ <button class="go" id="add">سجّل الجولة</button>
+</div>
+
+<div class="card"><div class="lbl">سجل الجولات</div><div id="hist"></div></div>
+<details class="card"><summary>⚙️ إعدادات قواعد الحساب</summary><div id="rl"></div></details>
+</div>
+
+<div id="win"><h2 id="wh">🎉 مبروك 🎉</h2><p id="wt"></p><div><button id="again">لعبة جديدة</button><button id="cls">إغلاق</button></div></div>
+<canvas id="cv"></canvas>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)};
+var S={sc:[0,0],rounds:[],mode:'h',buyer:0,mult:1,sound:true,won:false,kb:-1,
+ pj:[{sira:0,fifty:0,hundred:0,four:0,baloot:0},{sira:0,fifty:0,hundred:0,four:0,baloot:0}]};
+var VAL={h:{sira:2,fifty:5,hundred:10,four:0,baloot:2},s:{sira:4,fifty:10,hundred:20,four:40,baloot:0}};
+var DEF=JSON.stringify(VAL),KB={h:25,s:44},TIE=0;
+var NAMES={sira:'سرا (20)',fifty:'خمسين (50)',hundred:'مية (100)',four:'أربعمية (400)',baloot:'بلوت'};
+function save(){try{localStorage.setItem('baloot1',JSON.stringify({sc:S.sc,rounds:S.rounds,n:[$('n0').value,$('n1').value],t:$('tg').value,sound:S.sound,v:VAL,kb:KB,tie:TIE,p:[0,1,2,3].map(function(i){return $('p'+i).value})}))}catch(e){}}
+function load(){try{var d=JSON.parse(localStorage.getItem('baloot1')||'null');if(d){S.sc=d.sc;S.rounds=d.rounds;$('n0').value=d.n[0];$('n1').value=d.n[1];$('tg').value=d.t;S.sound=d.sound!==false;if(d.v)VAL=d.v;if(d.kb)KB=d.kb;TIE=d.tie||0;(d.p||[]).forEach(function(v,i){$('p'+i).value=v})}}catch(e){}}
+
+/* ---------- sound ---------- */
+var AC=null;
+function ctx(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,t,d,type,vol){var a=ctx();if(!a)return;var o=a.createOscillator(),g=a.createGain();o.type=type||'triangle';o.frequency.value=f;
+ g.gain.setValueAtTime(0.0001,a.currentTime+t);g.gain.exponentialRampToValueAtTime(vol||0.25,a.currentTime+t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,a.currentTime+t+d);
+ o.connect(g);g.connect(a.destination);o.start(a.currentTime+t);o.stop(a.currentTime+t+d+0.05)}
+function clap(t,len){var a=ctx();if(!a)return;var n=Math.floor(a.sampleRate*len),b=a.createBuffer(1,n,a.sampleRate),d=b.getChannelData(0);
+ for(var i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3);
+ var s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();s.buffer=b;f.type='bandpass';f.frequency.value=1800+Math.random()*1500;g.gain.value=0.5;
+ s.connect(f);f.connect(g);g.connect(a.destination);s.start(a.currentTime+t)}
+function sndRound(){if(!S.sound)return;tone(660,0,.12);tone(880,.1,.18)}
+function drum(t,v){var a=ctx();if(!a)return;var o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.setValueAtTime(180,a.currentTime+t);o.frequency.exponentialRampToValueAtTime(40,a.currentTime+t+.25);g.gain.setValueAtTime(v||.6,a.currentTime+t);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t+.3);o.connect(g);g.connect(a.destination);o.start(a.currentTime+t);o.stop(a.currentTime+t+.35)}
+function say(s){try{if(window.speechSynthesis){var u=new SpeechSynthesisUtterance(s);u.lang='ar-SA';u.rate=1.05;u.pitch=1.2;speechSynthesis.speak(u)}}catch(e){}}
+function sndSpecial(mu,kb){if(!S.sound)return;var i,j;
+ if(kb>=0){for(i=0;i<6;i++)drum(i*.12,.5);[523,659,784,1047,1319,1568].forEach(function(f,k){tone(f,.7+k*.08,.35,'sawtooth',.14)});for(j=0;j<22;j++)clap(.6+j*.07,.08);tone(2093,1.3,.8,'triangle',.22);say('كبوووت! طقّوها');confetti()}
+ else{for(i=0;i<mu;i++){drum(i*.22,.7);tone(330+i*110,i*.22,.2,'square',.12)}
+  tone(220,0,.3*mu+.2,'sawtooth',.06);for(j=0;j<8*mu;j++)clap(.2*mu+j*.06,.06);
+  tone(880,mu*.22+.1,.4,'triangle',.25);tone(1175,mu*.22+.2,.5,'triangle',.22);
+  say(['','','دبل!','ثري! الله يعينكم','فور! خلصت عليكم'][mu])}}
+function sndWin(){if(!S.sound)return;
+ var seq=[523,659,784,1047,784,1047,1319];seq.forEach(function(f,i){tone(f,i*.14,.3,'triangle',.28);tone(f/2,i*.14,.3,'sine',.15)});
+ tone(1568,1.1,.9,'triangle',.25);tone(1047,1.1,.9,'sine',.2);tone(784,1.1,.9,'sine',.2);
+ for(var i=0;i<26;i++)clap(.5+i*.11+Math.random()*.06,.09);
+ try{if(window.speechSynthesis){var u=new SpeechSynthesisUtterance('مبروك! ألف مبروك');u.lang='ar-SA';u.rate=1;setTimeout(function(){speechSynthesis.speak(u)},900)}}catch(e){}}
+
+/* ---------- confetti ---------- */
+function confetti(){var c=$('cv'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
+ var cols=['#e0b04a','#13a06f','#fff','#d9533f','#4aa3e0'],p=[];
+ for(var i=0;i<160;i++)p.push({x:Math.random()*c.width,y:-20-Math.random()*c.height*.6,r:4+Math.random()*6,vx:Math.random()*4-2,vy:2+Math.random()*4,c:cols[i%5],a:Math.random()*6});
+ var f=0;(function step(){x.clearRect(0,0,c.width,c.height);p.forEach(function(q){q.x+=q.vx;q.y+=q.vy;q.a+=.1;x.fillStyle=q.c;x.save();x.translate(q.x,q.y);x.rotate(q.a);x.fillRect(-q.r,-q.r/2,q.r*2,q.r);x.restore()});
+ if(++f<260)requestAnimationFrame(step);else x.clearRect(0,0,c.width,c.height)})()}
+
+/* ---------- scoring ---------- */
+function calc(){
+ var tot=S.mode==='h'?162:130,raw=parseInt($('ab').value,10);if(isNaN(raw))raw=0;raw=Math.max(0,Math.min(tot,raw));
+ var ab=[raw,tot-raw],base=S.mode==='h'?16:26,pts=[0,0];
+ if(S.mode==='s'){pts=[ab[0]/5,ab[1]/5]}
+ else{var o=1-S.buyer;var r=function(v,tie){return v%10===5?(tie?Math.ceil(v/10):Math.floor(v/10)):Math.round(v/10)};
+  pts[S.buyer]=r(ab[S.buyer],false);pts[o]=base-pts[S.buyer]}
+ var pj=[0,0],bal=[0,0];
+ for(var t=0;t<2;t++){var v=VAL[S.mode];pj[t]=S.pj[t].sira*v.sira+S.pj[t].fifty*v.fifty+S.pj[t].hundred*v.hundred+S.pj[t].four*v.four;bal[t]=S.mode==='h'?S.pj[t].baloot*v.baloot:0}
+ var b=S.buyer,o2=1-b,tb=pts[b]+pj[b],to=pts[o2]+pj[o2],fail=TIE?tb<to:tb<=to,res=[0,0];
+ if(S.kb>=0){res[S.kb]=(KB[S.mode]+pj[0]+pj[1])*S.mult;fail=S.kb!==b}else if(fail){res[o2]=(base+pj[0]+pj[1])*S.mult;res[b]=0}else{res[0]=(pts[0]+pj[0])*S.mult;res[1]=(pts[1]+pj[1])*S.mult}
+ res[0]+=bal[0];res[1]+=bal[1];
+ return{ab:ab,res:res,fail:fail,raw:raw}}
+
+/* ---------- UI ---------- */
+function drawPr(){var h='<div></div><div class="h">'+esc($('n0').value)+'</div><div class="h">'+esc($('n1').value)+'</div>';
+ Object.keys(NAMES).forEach(function(k){if(S.mode==='h'&&k==='four')return;if(S.mode==='s'&&k==='baloot')return;
+  h+='<div>'+NAMES[k]+'</div>';for(var t=0;t<2;t++)h+='<div class="st"><button data-t="'+t+'" data-k="'+k+'" data-d="-1">−</button><span>'+S.pj[t][k]+'</span><button data-t="'+t+'" data-k="'+k+'" data-d="1">+</button></div>'});
+ $('pr').innerHTML=h}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function names(){var a=$('n0').value||'لنا',b=$('n1').value||'لهم';$('an0').textContent=a;$('an1').textContent=b;$('by0').textContent=a;$('by1').textContent=b;$('kb0').textContent=a;$('kb1').textContent=b}
+function preview(){var c=calc();$('ob').textContent=c.ab[1];$('pv').textContent=($('ab').value===''&&S.kb<0?'':(c.fail?'المشتري خسران — ':'')+esc2($('n0').value)+' +'+c.res[0]+'   |   '+esc2($('n1').value)+' +'+c.res[1])}
+function esc2(s){return s}
+function render(){
+ var tg=parseInt($('tg').value,10)||152;
+ for(var i=0;i<2;i++){$('s'+i).textContent=S.sc[i];$('b'+i).style.width=Math.min(100,S.sc[i]/tg*100)+'%'}
+ var h='';if(!S.rounds.length)h='<div class="empty">ما فيه جولات بعد — سجّل أول جولة</div>';
+ else{h='<table><tr><th>#</th><th>'+esc($('n0').value)+'</th><th>'+esc($('n1').value)+'</th><th>النوع</th></tr>';
+  S.rounds.forEach(function(r,i){h+='<tr><td>'+(i+1)+'</td><td>'+r.r[0]+'</td><td>'+r.r[1]+'</td><td>'+(r.m==='h'?'حكم':'صن')+(r.mu>1?' ×'+r.mu:'')+(r.k>=0?'<div class="fail">كبوت</div>':(r.f?'<div class="fail">خسران</div>':''))+'</td></tr>'});h+='</table>'}
+ $('hist').innerHTML=h;$('snd').textContent=S.sound?'🔊 الصوت':'🔇 الصوت';var pn=function(i){return $('p'+i).value||('لاعب '+(i+1))};$('dl').textContent='الموزّع: '+pn(S.rounds.length%4);names();drawPr();preview();save()}
+function seg(id,key,num){$(id).addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;S[key]=num?+b.dataset.v:b.dataset.v;
+ [].forEach.call($(id).children,function(x){x.classList.toggle('on',x===b)});if(key==='mode'){}render()})}
+seg('gm','mode');seg('by','buyer',1);seg('mu','mult',1);seg('kb','kb',1);
+$('pr').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var t=+b.dataset.t,k=b.dataset.k;
+ S.pj[t][k]=Math.max(0,Math.min(k==='baloot'?1:4,S.pj[t][k]+ +b.dataset.d));drawPr();preview()});
+$('ab').addEventListener('input',preview);['n0','n1','p0','p1','p2','p3'].forEach(function(i){$(i).addEventListener('input',render)});$('tg').addEventListener('change',render);
+
+function resetInputs(){$('ab').value='';S.kb=-1;[].forEach.call($('kb').children,function(x){x.classList.toggle('on',x.dataset.v==='-1')});S.pj=[{sira:0,fifty:0,hundred:0,four:0,baloot:0},{sira:0,fifty:0,hundred:0,four:0,baloot:0}]}
+function tm(t){var a=[$('p'+t).value,$('p'+(t+2)).value].filter(Boolean).join(' و ');return a?' ('+a+')':''}
+function win(w){S.won=true;var q=S.sc[1-w]===0;$('wh').textContent=q?'☕ قهوة! ☕':'🎉 مبروك 🎉';$('wt').textContent='الفوز لـ '+($('n'+w).value||'')+tm(w)+' — '+S.sc[w]+' مقابل '+S.sc[1-w];$('win').classList.add('show');ctx();sndWin();if(q&&S.sound){[392,523,659,784].forEach(function(f,i){tone(f,2+i*.12,.25,'square',.12)})}confetti()}
+function buildRules(){var L={sira:'سرا',fifty:'خمسين',hundred:'مية',four:'أربعمية',baloot:'بلوت',kb:'كبوت'},h='';
+[['h','حكم',['sira','fifty','hundred','baloot','kb']],['s','صن',['sira','fifty','hundred','four','kb']]].forEach(function(m){h+='<div class="lbl">'+m[1]+' (بنقاط اللعبة)</div><div class="rg">';
+m[2].forEach(function(k){var v=k==='kb'?KB[m[0]]:VAL[m[0]][k];h+='<label>'+L[k]+'<input type="number" min="0" data-m="'+m[0]+'" data-k="'+k+'" value="'+v+'"></label>'});h+='</div>'});
+h+='<div class="lbl">إذا تساوى المشتري والخصم</div><div class="seg" id="tie"><button data-v="0"'+(TIE?'':' class="on"')+'>المشتري خسران</button><button data-v="1"'+(TIE?' class="on"':'')+'>المشتري يمدي</button></div><button class="go" id="rdef" style="font-size:15px;padding:10px">رجوع للقواعد الافتراضية</button>';$('rl').innerHTML=h}
+$('rl').addEventListener('change',function(e){var i=e.target;if(!i.dataset.k)return;var v=Math.max(0,parseInt(i.value,10)||0);if(i.dataset.k==='kb')KB[i.dataset.m]=v;else VAL[i.dataset.m][i.dataset.k]=v;render()});
+$('rl').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;if(b.id==='rdef'){VAL=JSON.parse(DEF);KB={h:25,s:44};TIE=0;buildRules();render()}else if(b.parentNode.id==='tie'){TIE=+b.dataset.v;buildRules();render()}});
+$('add').addEventListener('click',function(){
+ ctx();if($('ab').value===''&&S.kb<0){$('ab').focus();return}
+ var c=calc();S.rounds.push({r:c.res,m:S.mode,mu:S.mult,f:c.fail,k:S.kb});S.sc[0]+=c.res[0];S.sc[1]+=c.res[1];
+ resetInputs();render();
+ [0,1].forEach(function(i){if(c.res[i]){var e=$('s'+i);e.classList.add('pop');setTimeout(function(){e.classList.remove('pop')},300)}});
+ var tg=parseInt($('tg').value,10)||152;
+ if(S.sc[0]>=tg||S.sc[1]>=tg){if(S.sc[0]===S.sc[1])sndRound();else win(S.sc[0]>S.sc[1]?0:1)}else{var rr=S.rounds[S.rounds.length-1];if(rr.mu>1||rr.k>=0)sndSpecial(rr.mu,rr.k);else sndRound()}});
+$('und').addEventListener('click',function(){var r=S.rounds.pop();if(!r)return;S.sc[0]-=r.r[0];S.sc[1]-=r.r[1];render()});
+function fresh(){S.sc=[0,0];S.rounds=[];resetInputs();$('win').classList.remove('show');render()}
+$('rst').addEventListener('click',function(){if(confirm('تبدأ لعبة جديدة؟'))fresh()});
+$('again').addEventListener('click',fresh);$('cls').addEventListener('click',function(){$('win').classList.remove('show')});
+$('snd').addEventListener('click',function(){S.sound=!S.sound;if(S.sound){ctx();sndRound()}render()});
+load();buildRules();render();
+})();
+</script>
+</body>
+</html>
